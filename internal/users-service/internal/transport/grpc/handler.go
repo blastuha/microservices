@@ -4,9 +4,8 @@ import (
 	"context"
 
 	userpb "github.com/blastuha/test-service-proto/gen/user"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 	"github.com/your-org/users-service/internal/user"
-	"github.com/your-org/users-service/internal/web/users"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -27,14 +26,8 @@ func (h *Handler) CreateUser(ctx context.Context, req *userpb.CreateUserRequest)
 		return nil, handleValidationError(err)
 	}
 
-	// Конвертируем gRPC запрос в внутренний формат
-	createReq := users.CreateUserRequest{
-		Email:    openapi_types.Email(req.Email),
-		Password: &req.Password,
-	}
-
 	// Создаем пользователя через сервис
-	createdUser, err := h.svc.CreateUser(createReq)
+	createdUser, err := h.svc.CreateUser(req.Email, req.Password)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create user: %v", err)
 	}
@@ -82,20 +75,8 @@ func (h *Handler) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest)
 		return nil, handleValidationError(err)
 	}
 
-	// Конвертируем gRPC запрос в внутренний формат
-	// Валидация уже выполнена в validateUpdateUserRequest
-	updateReq := users.UpdateUserRequest{}
-
-	if req.Email != nil {
-		email := openapi_types.Email(*req.Email)
-		updateReq.Email = &email
-	}
-	if req.Password != nil {
-		updateReq.Password = req.Password
-	}
-
 	// Обновляем пользователя через сервис
-	updatedUser, err := h.svc.UpdateUser(req.Id, updateReq)
+	updatedUser, err := h.svc.UpdateUser(req.Id, req.Email, req.Password)
 	if err != nil {
 		if err == user.ErrUserNoFound {
 			return nil, status.Errorf(codes.NotFound, "user not found")

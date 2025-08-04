@@ -3,16 +3,12 @@ package user
 import (
 	"errors"
 	"fmt"
-
-	"github.com/your-org/users-service/internal/web/users"
-	// "task1/internal/tasksService"
-	// "task1/internal/web/users"
 )
 
 type UsersService interface {
 	GetAllUsers() ([]User, error)
-	CreateUser(in users.CreateUserRequest) (*User, error)
-	UpdateUser(id uint32, in users.UpdateUserRequest) (*User, error)
+	CreateUser(email, password string) (*User, error)
+	UpdateUser(id uint32, email, password *string) (*User, error)
 	DeleteUser(id uint32) error
 	GetUserByID(id uint32) (*User, error)
 	// GetTasksForUser(id uint) ([]tasksService.Task, error)
@@ -46,11 +42,11 @@ func (u *usersService) GetAllUsers() ([]User, error) {
 	return userList, nil
 }
 
-func (u *usersService) CreateUser(in users.CreateUserRequest) (*User, error) {
+func (u *usersService) CreateUser(email, password string) (*User, error) {
 	// Валидация уже выполнена в gRPC handler
 	userToCreate := User{
-		Email:    string(in.Email),
-		Password: *in.Password,
+		Email:    email,
+		Password: password,
 	}
 
 	createdUser, err := u.repo.CreateUser(&userToCreate)
@@ -61,18 +57,19 @@ func (u *usersService) CreateUser(in users.CreateUserRequest) (*User, error) {
 	return createdUser, nil
 }
 
-func (u *usersService) UpdateUser(id uint32, in users.UpdateUserRequest) (*User, error) {
+func (u *usersService) UpdateUser(id uint32, email, password *string) (*User, error) {
 	existingUser, err := u.repo.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	// Валидация уже выполнена в gRPC handler
-	if in.Email != nil {
-		existingUser.Email = string(*in.Email)
+	// Проверяем на nil email и password
+	// НО не проверяем на пустоту - это уже сделал handler
+	if email != nil {
+		existingUser.Email = *email
 	}
-	if in.Password != nil {
-		existingUser.Password = *in.Password
+	if password != nil {
+		existingUser.Password = *password
 	}
 
 	updatedUser, err := u.repo.UpdateUser(existingUser)

@@ -27,11 +27,3 @@ migrate-force:
 # Запуск приложения
 run:
 	go run cmd/main.go
-
-# генерируем пользователей
-gen-users:
-	oapi-codegen \
-	  -config ../../api/users-service/.openapi \
-	  -include-tags Users \
-	  -package users \
-	  ../../api/users-service/openapi.yaml > internal/web/users/api.gen.go
