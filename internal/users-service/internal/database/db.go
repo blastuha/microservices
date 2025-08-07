@@ -1,17 +1,23 @@
 package database
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
 type DB struct {
-	db *gorm.DB
+	Db *gorm.DB
 }
 
-func NewDB(db *gorm.DB) *DB {
-	return &DB{
-		db: db,
+func NewDB(dsn string) (*DB, error) {
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
-}
 
-func (d *DB) Init() {
-
+	return &DB{
+		Db: db,
+	}, nil
 }
