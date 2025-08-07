@@ -10,35 +10,39 @@ import (
 )
 
 type Server struct {
-	grpcServer *grpc.Server
-	port       int
+	server *grpc.Server
+	port   int
 }
 
 func NewServer(port int) *Server {
 	return &Server{
-		grpcServer: grpc.NewServer(),
-		port:       port,
+		server: grpc.NewServer(),
+		port:   port,
 	}
 }
 
 func (s *Server) RegisterServices(userService user.UsersService) {
 	// Регистрируем gRPC обработчики
 	userHandler := NewHandler(userService)
-	userpb.RegisterUserServiceServer(s.grpcServer, userHandler)
+	userpb.RegisterUserServiceServer(s.server, userHandler)
 }
 
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
+	ls, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
+	defer fmt.Println("gRPC server is running on port", s.port)
+
 	if err != nil {
-		return fmt.Errorf("failed to listen: %v", err)
+		return fmt.Errorf("failed to listen on port %d: %w", s.port, err)
 	}
 
-	fmt.Printf("gRPC server listening on port %d\n", s.port)
-	return s.grpcServer.Serve(lis)
+	if err := s.server.Serve(ls); err != nil {
+		return fmt.Errorf("failed to serve gRPC server: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Server) Stop() {
-	if s.grpcServer != nil {
-		s.grpcServer.GracefulStop()
-	}
+	s.server.GracefulStop()
+	fmt.Println("gRPC server is stopped on port", s.port)
 }

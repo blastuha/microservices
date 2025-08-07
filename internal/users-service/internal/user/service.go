@@ -3,14 +3,19 @@ package user
 import (
 	"errors"
 	"fmt"
+
+	"github.com/your-org/users-service/domain"
+	// "github.com/your-org/users-service/internal/web/users"
+	// "task1/internal/tasksService"
+	// "task1/internal/web/users"
 )
 
 type UsersService interface {
-	GetAllUsers() ([]User, error)
-	CreateUser(email, password string) (*User, error)
-	UpdateUser(id uint32, email, password *string) (*User, error)
+	GetAllUsers() ([]*domain.User, error)
+	CreateUser(email string, password string) (*domain.User, error)
+	UpdateUser(id uint32, email string, password string) (*domain.User, error)
 	DeleteUser(id uint32) error
-	GetUserByID(id uint32) (*User, error)
+	GetUserByID(id uint32) (*domain.User, error)
 	// GetTasksForUser(id uint) ([]tasksService.Task, error)
 }
 
@@ -33,7 +38,7 @@ func NewUsersService(repo UsersRepo) UsersService {
 	return &usersService{repo: repo}
 }
 
-func (u *usersService) GetAllUsers() ([]User, error) {
+func (u *usersService) GetAllUsers() ([]*domain.User, error) {
 	userList, err := u.repo.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("usersService.GetAllUsers: %w", err)
@@ -42,9 +47,9 @@ func (u *usersService) GetAllUsers() ([]User, error) {
 	return userList, nil
 }
 
-func (u *usersService) CreateUser(email, password string) (*User, error) {
+func (u *usersService) CreateUser(email string, password string) (*domain.User, error) {
 	// Валидация уже выполнена в gRPC handler
-	userToCreate := User{
+	userToCreate := domain.User{
 		Email:    email,
 		Password: password,
 	}
@@ -57,19 +62,18 @@ func (u *usersService) CreateUser(email, password string) (*User, error) {
 	return createdUser, nil
 }
 
-func (u *usersService) UpdateUser(id uint32, email, password *string) (*User, error) {
+func (u *usersService) UpdateUser(id uint32, email string, password string) (*domain.User, error) {
 	existingUser, err := u.repo.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	// Проверяем на nil email и password
-	// НО не проверяем на пустоту - это уже сделал handler
-	if email != nil {
-		existingUser.Email = *email
+	// Валидация уже выполнена в gRPC handler
+	if email != "" {
+		existingUser.Email = email
 	}
-	if password != nil {
-		existingUser.Password = *password
+	if password != "" {
+		existingUser.Password = password
 	}
 
 	updatedUser, err := u.repo.UpdateUser(existingUser)
@@ -92,7 +96,7 @@ func (u *usersService) DeleteUser(id uint32) error {
 	return nil
 }
 
-func (u *usersService) GetUserByID(id uint32) (*User, error) {
+func (u *usersService) GetUserByID(id uint32) (*domain.User, error) {
 	user, err := u.repo.GetUserByID(id)
 	if err != nil {
 		if errors.Is(err, ErrUserNoFound) {
