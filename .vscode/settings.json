@@ -1,0 +1,7 @@
+{
+  "editor.fontSize": 16,
+  "editor.fontFamily": "'JetBrains Mono', Consolas, 'Courier New', monospace",
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "golang.go"
+}
