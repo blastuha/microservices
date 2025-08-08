@@ -76,7 +76,7 @@ func (h *Handler) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest)
 	}
 
 	// Обновляем пользователя через сервис
-	updatedUser, err := h.svc.UpdateUser(req.Id, *req.Email, *req.Password)
+	updatedUser, err := h.svc.UpdateUser(req.Id, req.Email, req.Password)
 	if err != nil {
 		if err == user.ErrUserNoFound {
 			return nil, status.Errorf(codes.NotFound, "user not found")

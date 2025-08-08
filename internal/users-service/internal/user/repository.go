@@ -52,14 +52,13 @@ func (repo *usersRepo) GetUserByID(id uint32) (*domain.User, error) {
 // }
 
 func (repo *usersRepo) GetAllUsers() ([]*domain.User, error) {
-
-	var users []User
-	if err := repo.db.Preload("Tasks").Find(&users).Error; err != nil {
+	var ormUsers []User
+	if err := repo.db.Find(&ormUsers).Error; err != nil {
 		return nil, fmt.Errorf("usersRepo.GetAllUsers: %w", err)
 	}
 
 	var dmUsers []*domain.User
-	for _, user := range users {
+	for _, user := range ormUsers {
 		dmUsers = append(dmUsers, user.toDomain())
 	}
 

@@ -13,7 +13,7 @@ import (
 type UsersService interface {
 	GetAllUsers() ([]*domain.User, error)
 	CreateUser(email string, password string) (*domain.User, error)
-	UpdateUser(id uint32, email string, password string) (*domain.User, error)
+	UpdateUser(id uint32, email *string, password *string) (*domain.User, error)
 	DeleteUser(id uint32) error
 	GetUserByID(id uint32) (*domain.User, error)
 	// GetTasksForUser(id uint) ([]tasksService.Task, error)
@@ -62,18 +62,21 @@ func (u *usersService) CreateUser(email string, password string) (*domain.User, 
 	return createdUser, nil
 }
 
-func (u *usersService) UpdateUser(id uint32, email string, password string) (*domain.User, error) {
+func (u *usersService) UpdateUser(id uint32, email *string, password *string) (*domain.User, error) {
 	existingUser, err := u.repo.GetUserByID(id)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, ErrUserNoFound) {
+			return nil, ErrUserNoFound
+		}
+		return nil, fmt.Errorf("usersService.UpdateUser: %w", err)
 	}
 
-	// Валидация уже выполнена в gRPC handler
-	if email != "" {
-		existingUser.Email = email
+	if email != nil && *email != "" {
+		existingUser.Email = *email
 	}
-	if password != "" {
-		existingUser.Password = password
+
+	if password != nil && *password != "" {
+		existingUser.Password = *password
 	}
 
 	updatedUser, err := u.repo.UpdateUser(existingUser)
