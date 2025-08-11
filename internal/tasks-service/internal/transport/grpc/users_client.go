@@ -30,7 +30,7 @@ type client struct {
 
 // New создает новый клиент сервиса пользователей, инкапсулируя логику подключения.
 // Возвращает клиент, функцию для закрытия соединения и ошибку.
-func New(ctx context.Context, addr string) (Client, func(), error) {
+func NewClient(ctx context.Context, addr string) (Client, func(), error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}

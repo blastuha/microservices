@@ -12,13 +12,13 @@ import (
 
 type Server struct {
 	server *grpc.Server
-	port   int
+	Port   int
 }
 
 func NewServer(port int) *Server {
 	return &Server{
 		server: grpc.NewServer(),
-		port:   port,
+		Port:   port,
 	}
 }
 
@@ -28,12 +28,13 @@ func (s *Server) RegisterServices(svc tasks.TasksService, cl Client) {
 }
 
 func (s *Server) Start() error {
-	ls, err := net.Listen("tcp", strconv.Itoa(s.port))
+	addr := net.JoinHostPort("", strconv.Itoa(s.Port)) // ":50051"
+	ls, err := net.Listen("tcp", addr)
 
-	fmt.Println("gRPC tasks server is running on port", s.port)
+	fmt.Println("gRPC tasks server is running on port", s.Port)
 
 	if err != nil {
-		return fmt.Errorf("failed to listen on port %d: %w", s.port, err)
+		return fmt.Errorf("failed to listen on port %d: %w", s.Port, err)
 	}
 
 	if err := s.server.Serve(ls); err != nil {
@@ -45,5 +46,5 @@ func (s *Server) Start() error {
 
 func (s *Server) Stop() {
 	s.server.GracefulStop()
-	fmt.Println("gRPC server is stopped on port", s.port)
+	fmt.Println("gRPC server is stopped on port", s.Port)
 }
