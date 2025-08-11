@@ -12,7 +12,7 @@ type tasksService struct {
 }
 
 type TasksService interface {
-	CreateTask(task string, isDone bool, id uint32) (*domain.Task, error)
+	CreateTask(task string, isDone bool, userID uint32) (*domain.Task, error)
 	GetAllTasks() ([]*domain.Task, error)
 	UpdateTask(task string, isDone bool, id uint32) (*domain.Task, error)
 	DeleteTask(id uint32) error
@@ -26,12 +26,12 @@ func (s *tasksService) GetAllTasks() ([]*domain.Task, error) {
 	return s.repo.GetAllTasks()
 }
 
-func (s *tasksService) CreateTask(task string, isDone bool, id uint32) (*domain.Task, error) {
+func (s *tasksService) CreateTask(task string, isDone bool, userID uint32) (*domain.Task, error) {
 	if strings.TrimSpace(task) == "" {
 		return nil, ErrInvalidInput
 	}
 
-	taskToCreate := domain.Task{Task: task, IsDone: isDone, ID: id}
+	taskToCreate := domain.Task{Task: task, IsDone: isDone, UserID: userID}
 
 	createdTask, err := s.repo.CreateTask(&taskToCreate)
 	if err != nil {
