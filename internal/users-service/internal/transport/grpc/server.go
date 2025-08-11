@@ -29,7 +29,7 @@ func (s *Server) RegisterServices(userService user.UsersService) {
 
 func (s *Server) Start() error {
 	ls, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
-	fmt.Println("gRPC server is running on port", s.port)
+	fmt.Println("gRPC users server is running on port", s.port)
 
 	if err != nil {
 		return fmt.Errorf("failed to listen on port %d: %w", s.port, err)
