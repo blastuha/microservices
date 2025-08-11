@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	dsn              = "postgres://postgres:aZAz1998@localhost:5432/postgres?sslmode=disable"
+	dsn              = "postgres://postgres:aZAz1998@localhost:5432/tasks_db?sslmode=disable"
 	tasksServicePort = 50052             // на каком порту слушает tasks сервис
 	userServiceAddr  = "localhost:50051" // адрес gRPC user-service
 )

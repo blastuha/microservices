@@ -1,5 +1,6 @@
 # переменные
-DB_DSN := "postgres://postgres:aZAz1998@localhost:5432/postgres?sslmode=disable"
+# DB_DSN := "postgres://postgres:aZAz1998@localhost:5432/postgres?sslmode=disable"
+DB_DSN := "postgres://postgres:aZAz1998@localhost:5432/tasks_db?sslmode=disable"
 MIGRATE := migrate -path ./migrations -database $(DB_DSN)
 
 .PHONY: run migrate migrate-down migrate-new

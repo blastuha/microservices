@@ -8,7 +8,7 @@ import (
 	"github.com/your-org/users-service/internal/user"
 )
 
-const dsn = "postgres://postgres:aZAz1998@localhost:5432/postgres?sslmode=disable"
+const dsn = "postgres://postgres:aZAz1998@localhost:5432/users_db?sslmode=disable"
 
 func main() {
 	db, err := database.NewDB(dsn)
