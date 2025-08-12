@@ -14,6 +14,7 @@ type TasksRepo interface {
 	UpdateTask(t *domain.Task) (*domain.Task, error)
 	DeleteTask(id uint32) error
 	GetByID(id uint32) (*domain.Task, error)
+	ListTasksByUser(userId uint32) ([]*domain.Task, error)
 }
 
 type taskRepo struct {
@@ -84,4 +85,21 @@ func (r *taskRepo) GetByID(id uint32) (*domain.Task, error) {
 	}
 
 	return ormTask.toDomain(), nil
+}
+
+func (r *taskRepo) ListTasksByUser(userID uint32) ([]*domain.Task, error) {
+	var tasks []Task
+
+	if err := r.db.Where("user_id =?", userID).Find(&tasks).Error; err != nil {
+		return nil, fmt.Errorf("ListTasksByUser: failed to get tasks: %w", err)
+	}
+
+	out := make([]*domain.Task, 0, len(tasks))
+
+	for _, t := range tasks {
+		dm := t.toDomain()
+		out = append(out, dm)
+	}
+
+	return out, nil
 }

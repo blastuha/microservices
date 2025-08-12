@@ -100,10 +100,30 @@ func (h *Handler) DeleteTask(ctx context.Context, req *taskspb.TaskDeleteRequest
 
 	if err := h.svc.DeleteTask(id); err != nil {
 		if errors.Is(err, tasks.ErrTaskNotFound) {
-			return nil, status.Error(codes.NotFound, "task not found")
+			return nil, status.Errorf(codes.NotFound, "task not found")
 		}
 		return nil, status.Errorf(codes.Internal, "failed to delete task: %v", err)
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (h *Handler) ListTasksByUser(ctx context.Context, req *taskspb.ListTasksByUserRequest) (*taskspb.TaskListResponse, error) {
+	if req.GetUserId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "id must be > 0")
+	}
+
+	tasks, err := h.svc.ListTasksByUser(req.UserId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get list of tasks by user_id: %d", req.UserId)
+	}
+
+	out := make([]*taskspb.Task, 0, len(tasks))
+
+	for _, t := range tasks {
+		pbTask := &taskspb.Task{Id: t.ID, IsDone: t.IsDone, UserId: t.UserID, Title: t.Task}
+		out = append(out, pbTask)
+	}
+
+	return &taskspb.TaskListResponse{Tasks: out}, nil
 }

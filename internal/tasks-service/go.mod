@@ -3,7 +3,7 @@ module github.com/your-org/tasks-service
 go 1.24.3
 
 require (
-	github.com/blastuha/test-service-proto v1.0.1
+	github.com/blastuha/test-service-proto v1.0.2
 	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.7
 	gorm.io/driver/postgres v1.6.0

@@ -1,5 +1,5 @@
-github.com/blastuha/test-service-proto v1.0.1 h1:fGZKQzLqhdcvinOxnazziA3Pp4gY6v2i7RmO4iuWou0=
-github.com/blastuha/test-service-proto v1.0.1/go.mod h1:lgxoz5wdLB9a3B0l/ATH6QQMXg0ESZmQwZwP//Vdcow=
+github.com/blastuha/test-service-proto v1.0.2 h1:62KvSSwIPpgmhVtDog0U+d7/UyGnKShABqKJ8jd/ogk=
+github.com/blastuha/test-service-proto v1.0.2/go.mod h1:A2zobZfZnCG3aBlHpabyEgY5jX0AKB3xZzSpWETdfiI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

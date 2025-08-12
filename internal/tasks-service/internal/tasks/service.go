@@ -16,6 +16,7 @@ type TasksService interface {
 	GetAllTasks() ([]*domain.Task, error)
 	UpdateTask(task string, isDone bool, id uint32) (*domain.Task, error)
 	DeleteTask(id uint32) error
+	ListTasksByUser(userId uint32) ([]*domain.Task, error)
 }
 
 func NewTasksService(r TasksRepo) TasksService {
@@ -58,4 +59,8 @@ func (s *tasksService) UpdateTask(task string, isDone bool, id uint32) (*domain.
 
 func (s *tasksService) DeleteTask(id uint32) error {
 	return s.repo.DeleteTask(id)
+}
+
+func (s *tasksService) ListTasksByUser(userId uint32) ([]*domain.Task, error) {
+	return s.repo.ListTasksByUser(userId)
 }
